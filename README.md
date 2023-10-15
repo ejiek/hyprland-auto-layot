@@ -60,3 +60,14 @@ So orientation is updated every time.
 
 **When to use**
 Dynamic monitor and workspace setups where changes occur post-initialization.
+
+## Extras
+
+Hyprland doesn't report all workspaces through IPC (and hyprctl).
+It reports only:
+
+- workspaces with windows
+- visible workspaces
+
+Good thing is, it stores orientation even for workspaces it doesn't report.
+This is why fire once strategy works. But to find all the workspaces this tool needs to parse `hyprland.conf`.

@@ -8,5 +8,6 @@ keywords = ["hyprland", "autolayout", "multi-monitor", "vertical", "wayland"]
 license = "MIT"
 
 [dependencies]
+clap = { version = "4.4.6", features = ["derive"] }
 eyre = "0.6.8"
 hyprland = { git = "https://github.com/ejiek/hyprland-rs", branch = "layoutmsg" }
