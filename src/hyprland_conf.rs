@@ -6,12 +6,14 @@ use std::path::PathBuf;
 // Hyprland config
 #[derive(Debug)]
 pub struct Config {
-    workspaces: Vec<Workspace>,
+    pub workspaces: Vec<Workspace>,
 }
+
+pub type Id = i32;
 
 #[derive(Debug)]
 pub struct Workspace {
-    id: i128,
+    pub id: Id,
 }
 
 impl Config {
@@ -38,16 +40,11 @@ impl Config {
 
         workspace_lines
             .iter()
-            .map(|line| {
-                *line.split(',')
-                    .collect::<Vec<&str>>()
-                    .first()
-                    .unwrap()
-            })
-            .filter(|id| id.parse::<i128>().is_ok())
+            .map(|line| *line.split(',').collect::<Vec<&str>>().first().unwrap())
+            .filter(|id| id.parse::<Id>().is_ok())
             .for_each(|id| {
                 workspaces.push(Workspace {
-                    id: id.parse::<i128>().unwrap(),
+                    id: id.parse::<Id>().unwrap(),
                 })
             });
         println!("Defined workspaces: {:?}", workspace_lines);

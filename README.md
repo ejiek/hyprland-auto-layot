@@ -71,3 +71,5 @@ It reports only:
 
 Good thing is, it stores orientation even for workspaces it doesn't report.
 This is why fire once strategy works. But to find all the workspaces this tool needs to parse `hyprland.conf`.
+
+It seems that it's not possible to set orientation to a workspace without any windows o.O
