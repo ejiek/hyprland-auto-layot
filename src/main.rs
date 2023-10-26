@@ -1,6 +1,6 @@
 use clap::Parser;
 use eyre::Result;
-use hyprland::data::{Monitor, Monitors, Transforms};
+use hyprland::data::Monitors;
 use hyprland::event_listener::EventListenerMutable as EventListener;
 use hyprland::prelude::*;
 
@@ -11,6 +11,8 @@ use workspace_handler::*;
 
 mod fire_once;
 use fire_once::*;
+
+mod helpers;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -26,21 +28,18 @@ struct Args {
     /// Goes trough all workspaces once and then exits (default)
     #[clap(short, long)]
     fireonce: bool,
+
+    // Output all clients at active workspace
+    #[clap(short, long)]
+    clients: bool,
 }
 
 fn main() -> Result<()> {
     let args = Args::parse();
 
     let monitors = Monitors::get()?;
-    let vertical_monitors: Vec<String> = monitors
-        .iter()
-        .filter(|m| is_vertical(m))
-        .map(|m| m.name.clone())
-        .collect();
 
-    if args.verbose {
-        println!("Vertical Monitors: {:?}", vertical_monitors);
-    };
+    // TODO: Check if any vertical monitors are present
 
     if args.daemon {
         if args.verbose {
@@ -48,24 +47,14 @@ fn main() -> Result<()> {
         }
         let mut event_listener = EventListener::new();
         event_listener.add_workspace_change_handler(move |_id, state| {
-            workspace_change_handler(state, vertical_monitors.clone());
+             workspace_change_handler(state, monitors.clone());
         });
 
         event_listener
             .start_listener()
             .map_err(|e| eyre::Report::new(e).wrap_err("Failed to start event listener"))?;
     } else {
-        fire_once(args.verbose, vertical_monitors)?;
+        fire_once(args.verbose, monitors)?;
     };
     Ok(())
-}
-
-fn is_vertical(monitor: &Monitor) -> bool {
-    matches!(
-        monitor.transform,
-        Transforms::Normal90
-            | Transforms::Normal270
-            | Transforms::Flipped90
-            | Transforms::Flipped270
-    )
 }
