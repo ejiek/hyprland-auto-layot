@@ -1,4 +1,5 @@
 [package]
+authors = ["Vlad Petrov <rust@ejiek.id>"]
 description = "A tool to automatically set vertical or horizontal master layout in Hyprland based on a monitor orientation"
 documentation = "https://doc.rs/hyprland-auto-layout"
 edition = "2021"
