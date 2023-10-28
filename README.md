@@ -17,10 +17,14 @@ Started from a [Hyprland issue](https://github.com/hyprwm/Hyprland/issues/3174).
 
 - [x] Add proper cli support with [clap](https://github.com/clap-rs/clap)
 - [x] Implement Fire Once strategy to handle the initial setup
-- [ ] Transition from hyprland-rs to reduce size (this tool needs just a couple of dispatchers and a little bit of unix socket parsing)
-- [ ] Startup checks & warnings for Fire once
-- [ ] Make orientation configurable (currently hardcoded)
-- [ ] Documentation (installation, usage, configuration)
+- [ ] Configurable orientation (currently hardcoded)
+- [ ] Configurable or baked in placeholder window (currently hardcoded alacritty)
+- [ ] Config file (proper xdg support)
+- Documentation
+  - [ ] Installation
+  - [ ] Usage
+  - [ ] Configuration
+- [ ] Startup checks & warnings
 - [ ] Figure out Special Workspaces
 
 ## Installation
@@ -29,7 +33,7 @@ To Be Done...
 
 ## How does it work
 
-Then there are two strategies.
+There are two strategies.
 
 ### 🔁 Daemonized
 
