@@ -28,10 +28,6 @@ struct Args {
     /// Goes trough all workspaces once and then exits (default)
     #[clap(short, long)]
     fireonce: bool,
-
-    // Output all clients at active workspace
-    #[clap(short, long)]
-    clients: bool,
 }
 
 fn main() -> Result<()> {
@@ -47,7 +43,10 @@ fn main() -> Result<()> {
         }
         let mut event_listener = EventListener::new();
         event_listener.add_workspace_change_handler(move |_id, state| {
-             workspace_change_handler(state, monitors.clone());
+            match workspace_change_handler(state, monitors.clone()) {
+                Ok(_) => {}
+                Err(e) => println!("Unable to handle workspace change event: {:?}", e),
+            };
         });
 
         event_listener

@@ -20,6 +20,7 @@ Started from a [Hyprland issue](https://github.com/hyprwm/Hyprland/issues/3174).
 - [ ] Startup checks & warnings for Fire once
 - [ ] Make orientation configurable (currently hardcoded)
 - [ ] Documentation (installation, usage, configuration)
+- [ ] Figure out Special Workspaces
 
 ## How does it work
 

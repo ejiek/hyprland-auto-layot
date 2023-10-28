@@ -4,8 +4,8 @@ use hyprland::dispatch::*;
 use hyprland::prelude::*;
 use std::process::Command;
 
-use crate::hyprland_conf::Config;
 use crate::helpers::*;
+use crate::hyprland_conf::Config;
 use std::{thread, time};
 
 // Save active workspaces for each monitor
@@ -31,7 +31,7 @@ pub fn fire_once(verbose: bool, monitors: Monitors) -> Result<()> {
     // Therefore we need to get them from the config file
     let hyprland_config = Config::open_default()?;
     if verbose {
-      println!("Hyprland config: {:?}", hyprland_config);
+        println!("Hyprland config: {:?}", hyprland_config);
     }
 
     let initial_ws = Workspace::get_active()?;
