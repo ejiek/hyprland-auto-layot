@@ -2,6 +2,8 @@ use eyre::{eyre, Result};
 use hyprland::data::{Monitors, Transforms, Workspace};
 use hyprland::dispatch::*;
 
+use log::{debug, error};
+
 pub enum Orientation {
     Vertical,
     Horizontal,
@@ -10,21 +12,15 @@ pub enum Orientation {
 pub fn rotate_ws(ws: Workspace, monitors: &mut Monitors) -> Result<()> {
     match get_monitor_orientation(&ws.monitor, monitors) {
         Ok(Orientation::Vertical) => {
-            println!(
-                "Setting vertical orientation for {} at {}",
-                &ws.id, &ws.monitor
-            );
+            debug!("Setting vertical: ws {}, mon {}", &ws.id, &ws.monitor);
             Dispatch::call(DispatchType::OrientationTop)?;
         }
         Ok(Orientation::Horizontal) => {
-            println!(
-                "Setting horizontal orientation for {} at {}",
-                &ws.id, &ws.monitor
-            );
+            debug!("Setting horizontal: ws {}, mon {}", &ws.id, &ws.monitor);
             Dispatch::call(DispatchType::OrientationCenter)?;
         }
         Err(e) => {
-            println!("Monitor not found: {:?}", e);
+            error!("Monitor not found: {:?}", e);
         }
     }
     Ok(())

@@ -6,6 +6,8 @@ use hyprland::prelude::*;
 use std::process::Command;
 use std::{thread, time};
 
+use log::{error, trace, warn};
+
 use eyre::Result;
 
 use crate::helpers::*;
@@ -18,6 +20,7 @@ pub fn workspace_change_handler(state: &mut State, monitors: Monitors) -> Result
     // Check if the current monitor is vertical or horizontal
     // Rotate the monitor accordingly
     // Kill the place holder
+    warn!("kek");
 
     // Get client list
     let clients = Clients::get()?;
@@ -37,7 +40,7 @@ pub fn workspace_change_handler(state: &mut State, monitors: Monitors) -> Result
             // TODO: make placeholder configurable
             // even better: draw a window from this app
             // even better: fix hyprland not setting orientation on an empty ws
-            println!("No clients in the workspace, opening placeholder");
+            trace!("No clients in the workspace, opening a placeholder");
             let placeholder = Some(
                 Command::new("alacritty")
                     .spawn()
@@ -53,26 +56,29 @@ pub fn workspace_change_handler(state: &mut State, monitors: Monitors) -> Result
 
     match get_monitor_orientation(&state.active_monitor, &mut monitors.clone()) {
         Ok(Orientation::Vertical) => {
-            println!(
-                "Setting vertical orientation for {} at {}",
-                &state.active_workspace, &state.active_monitor
+            trace!(
+                "Setting vertical: ws {}, mon {}",
+                &state.active_workspace,
+                &state.active_monitor
             );
             Dispatch::call(DispatchType::OrientationTop).unwrap();
         }
         Ok(Orientation::Horizontal) => {
-            println!(
-                "Setting horizontal orientation for {} at {}",
-                &state.active_workspace, &state.active_monitor
+            trace!(
+                "Setting horizontal:  ws {}, mon {}",
+                &state.active_workspace,
+                &state.active_monitor
             );
             Dispatch::call(DispatchType::OrientationCenter).unwrap();
         }
         Err(e) => {
-            println!("Monitor not found: {:?}", e);
+            error!("Monitor not found: {:?}", e);
             // TODO: Handle error
         }
     };
 
     if window_placeholder.is_some() {
+        trace!("Killing the placeholder");
         window_placeholder.unwrap().kill()?;
     }
 

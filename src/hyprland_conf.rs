@@ -3,6 +3,8 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
 
+use log::debug;
+
 // Hyprland config
 #[derive(Debug)]
 pub struct Config {
@@ -47,7 +49,7 @@ impl Config {
                     id: id.parse::<Id>().unwrap(),
                 })
             });
-        println!("Defined workspaces: {:?}", workspace_lines);
+        debug!("Defined workspaces: {:?}", workspace_lines);
         Ok(Config { workspaces })
     }
 }

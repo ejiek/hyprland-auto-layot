@@ -4,6 +4,8 @@ use hyprland::dispatch::*;
 use hyprland::prelude::*;
 use std::process::Command;
 
+use log::debug;
+
 use crate::helpers::*;
 use crate::hyprland_conf::Config;
 use std::{thread, time};
@@ -19,25 +21,17 @@ use std::{thread, time};
 // Restore initial workspaces for each monitor
 // Go to the initial workspace
 
-pub fn fire_once(verbose: bool, monitors: Monitors) -> Result<()> {
-    if verbose {
-        println!("Running in fireonce mode");
-    }
-
+pub fn fire_once(monitors: Monitors) -> Result<()> {
     // Monitors acquired on startup hold information about initial
     // active workspaces for each monitor
 
     // Non active workspaces are not available through the IPC
     // Therefore we need to get them from the config file
     let hyprland_config = Config::open_default()?;
-    if verbose {
-        println!("Hyprland config: {:?}", hyprland_config);
-    }
+    debug!("Hyprland config: {:?}", hyprland_config);
 
     let initial_ws = Workspace::get_active()?;
-    if verbose {
-        println!("Initial active workspace: {:?}", initial_ws);
-    }
+    debug!("Initial active workspace: {:?}", initial_ws);
 
     let mut workspaces = hyprland_config.workspaces.into_iter();
 
