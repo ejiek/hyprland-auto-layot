@@ -1,11 +1,14 @@
 [package]
-name = "hyprland-auto-layout"
 description = "A tool to automatically set vertical or horizontal master layout in Hyprland based on a monitor orientation"
-version = "0.1.0"
+documentation = "https://doc.rs/hyprland-auto-layout"
 edition = "2021"
-repository = "https://github.com/ejiek/hyprland-auto-layout"
+homepage = "https://github.com/ejiek/hyprland-auto-layout"
 keywords = ["hyprland", "autolayout", "multi-monitor", "vertical", "wayland"]
 license = "MIT"
+name = "hyprland-auto-layout"
+readme = "README.md"
+repository = "https://github.com/ejiek/hyprland-auto-layout"
+version = "0.1.0"
 
 [dependencies]
 clap = { version = "4.4.6", features = ["derive"] }
