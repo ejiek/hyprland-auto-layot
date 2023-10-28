@@ -31,7 +31,7 @@ To Be Done...
 
 Then there are two strategies.
 
-### Daemonized
+### 🔁 Daemonized
 
 Listens for Hyprland IPC events.
 On the `workspace` change event it checks a monitor+workspace pair and sets an orientation.
@@ -40,18 +40,20 @@ So orientation is updated every time.
 
 **Pros**
 - Adapts to workspace reassignments between monitors
-- Accommodates newly added or removed monitors and workspaces.
+- Accommodates newly added or removed monitors and workspaces
+- Doesn't rely on parsing `hyrpland.conf`
 
 **Cons**
 - Runs continuously in the background
 - Processes every Hyprland signal
+- You might see flashing placeholder window more often (see [IPC missing workspace orientation](#IPC-missing-workspace-orientation))
 
 **When to use**
 Dynamic monitor and workspace setups where changes occur post-initialization.
 
 `monitoradded` and `monitorremoved' are not handled yet but it should update a list of monitors.
 
-### Fire Once
+### ➡️ Fire Once
 
 On startup, this app goes through all workspaces and sets appropriate orientation.
 Then returns to the default workspaces for each monitor.
@@ -61,14 +63,14 @@ Then returns to the default workspaces for each monitor.
 
 **Cons:**
 - Not adaptive (e.g., reassigning workspaces to different monitors, accommodating new monitors)
-- Initialization takes some time and may look weird (dancing cursor)
+- Relies on a parsing `hyprland.conf`
 
 **When to use**
 Best suited for static workspace-to-monitor bindings
 
 ## Extras
 
-### IPC missing information
+### IPC missing workspaces
 
 Hyprland doesn't report all workspaces through IPC (and `hyprctl`).
 It reports only:
@@ -81,6 +83,11 @@ This is why fire once strategy works.
 But to find all the workspaces this tool needs to parse `hyprland.conf`.
 
 Probably it's possible to fix this issue in Hyprland.
+
+### IPC missing workspace orientation
+
+There is no way to get current workspace orientation from IPC.
+Because of it this app always assumes that current orientation is wrong and set the correct one.
 
 ### IPC ignoring orientation
 
