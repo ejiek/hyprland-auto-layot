@@ -1,7 +1,6 @@
 use eyre::Result;
 use std::fs::File;
 use std::io::prelude::*;
-use std::path::PathBuf;
 
 use log::debug;
 
@@ -25,11 +24,6 @@ impl Config {
         let mut contents = String::new();
         file.read_to_string(&mut contents)?;
         Config::parse(contents)
-    }
-    pub fn open_default() -> Result<Self> {
-        // TODO: use xdg_config
-        let default_path = PathBuf::from("/home/ejiek/.config/hypr/hyprland.conf");
-        Config::open(default_path)
     }
 
     fn parse(raw_config: String) -> Result<Self> {

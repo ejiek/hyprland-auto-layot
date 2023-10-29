@@ -1,4 +1,4 @@
-use hyprland::data::{Clients, Monitors};
+use hyprland::data::Clients;
 use hyprland::dispatch::*;
 use hyprland::event_listener::State;
 use hyprland::prelude::*;
@@ -6,21 +6,19 @@ use hyprland::prelude::*;
 use std::process::Command;
 use std::{thread, time};
 
-use log::{error, trace, warn};
+use log::{debug, error};
 
 use eyre::Result;
 
+use crate::config::Config;
 use crate::helpers::*;
 
-pub fn workspace_change_handler(state: &mut State, monitors: Monitors) -> Result<()> {
-    // TODO: Handle empty workspace
-
+pub fn workspace_change_handler(state: &mut State, config: Config) -> Result<()> {
     // Check if there are any clients in the workspace
     // If there are no clients, open a place holder
     // Check if the current monitor is vertical or horizontal
     // Rotate the monitor accordingly
     // Kill the place holder
-    warn!("kek");
 
     // Get client list
     let clients = Clients::get()?;
@@ -40,7 +38,7 @@ pub fn workspace_change_handler(state: &mut State, monitors: Monitors) -> Result
             // TODO: make placeholder configurable
             // even better: draw a window from this app
             // even better: fix hyprland not setting orientation on an empty ws
-            trace!("No clients in the workspace, opening a placeholder");
+            debug!("No clients in the workspace, opening a placeholder");
             let placeholder = Some(
                 Command::new("alacritty")
                     .spawn()
@@ -54,22 +52,21 @@ pub fn workspace_change_handler(state: &mut State, monitors: Monitors) -> Result
         false => None,
     };
 
-    match get_monitor_orientation(&state.active_monitor, &mut monitors.clone()) {
+    // TODO: replace with rotate_ws
+    match get_monitor_orientation(&state.active_monitor, None) {
         Ok(Orientation::Vertical) => {
-            trace!(
+            debug!(
                 "Setting vertical: ws {}, mon {}",
-                &state.active_workspace,
-                &state.active_monitor
+                &state.active_workspace, &state.active_monitor
             );
-            Dispatch::call(DispatchType::OrientationTop).unwrap();
+            Dispatch::call(config.vertical_layout.into()).unwrap();
         }
         Ok(Orientation::Horizontal) => {
-            trace!(
+            debug!(
                 "Setting horizontal:  ws {}, mon {}",
-                &state.active_workspace,
-                &state.active_monitor
+                &state.active_workspace, &state.active_monitor
             );
-            Dispatch::call(DispatchType::OrientationCenter).unwrap();
+            Dispatch::call(config.horizontal_layout.into()).unwrap();
         }
         Err(e) => {
             error!("Monitor not found: {:?}", e);
@@ -78,7 +75,7 @@ pub fn workspace_change_handler(state: &mut State, monitors: Monitors) -> Result
     };
 
     if window_placeholder.is_some() {
-        trace!("Killing the placeholder");
+        debug!("Killing the placeholder");
         window_placeholder.unwrap().kill()?;
     }
 

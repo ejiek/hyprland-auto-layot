@@ -1,11 +1,9 @@
 use clap::Parser;
 use eyre::Result;
-use hyprland::data::Monitors;
 use hyprland::event_listener::EventListenerMutable as EventListener;
-use hyprland::prelude::*;
-use serde::Serialize;
+use std::path::PathBuf;
 
-use log::{info, error};
+use log::{debug, error, info};
 use simple_logger::SimpleLogger;
 
 mod hyprland_conf;
@@ -18,15 +16,8 @@ use fire_once::*;
 
 mod helpers;
 
-#[derive(clap::ValueEnum, Clone, Debug, Serialize)]
-#[serde(rename_all = "lowercase")]
-pub enum ArgLayout {
-    Center,
-    Left,
-    Top,
-    Right,
-    Bottom,
-}
+mod config;
+use config::{Config, Layout, Mode};
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -52,23 +43,22 @@ struct Args {
     #[clap(long,
            value_name = "LAYOUT",
            value_enum,
-           default_value_t = ArgLayout::Center)]
-    horizontal_layout: ArgLayout,
+           default_value_t = Layout::Center)]
+    horizontal_layout: Layout,
 
     /// Vertical orientation layout
     #[clap(long,
            value_name = "LAYOUT",
            value_enum,
-           default_value_t = ArgLayout::Top)]
-    vertical_layout: ArgLayout,
+           default_value_t = Layout::Top)]
+    vertical_layout: Layout,
 
     /// hyrpland.conf file path.
     /// If not provided the following paths are checked in order:
     /// $XDG_CONFIG_HOME/hyprland/hyprland.conf
     /// $HOME/.config/hyprland/hyprland.conf
     #[clap(long)]
-    hyprland_conf: Option<String>,
-
+    hyprland_conf: Option<PathBuf>,
 }
 
 fn main() -> Result<()> {
@@ -83,7 +73,19 @@ fn main() -> Result<()> {
         .without_timestamps()
         .init()?;
 
-    let monitors = Monitors::get()?;
+    let mode = match args.fireonce {
+        true => Mode::FireOnce(args.hyprland_conf),
+        false => Mode::Daemon,
+    };
+
+    let config = Config::new(
+        args.horizontal_layout,
+        args.vertical_layout,
+        args.placeholder_window,
+        mode,
+    );
+
+    debug!("Using config: {:?}", config);
 
     // TODO: Check if any vertical monitors are present
 
@@ -91,7 +93,7 @@ fn main() -> Result<()> {
         info!("Running in Daemon mode");
         let mut event_listener = EventListener::new();
         event_listener.add_workspace_change_handler(move |_id, state| {
-            match workspace_change_handler(state, monitors.clone()) {
+            match workspace_change_handler(state, config.clone()) {
                 Ok(_) => {}
                 Err(e) => error!("Unable to handle workspace change event: {:?}", e),
             };
@@ -102,7 +104,7 @@ fn main() -> Result<()> {
             .map_err(|e| eyre::Report::new(e).wrap_err("Failed to start event listener"))?;
     } else {
         info!("Running in FireOnce mode");
-        fire_once(monitors)?;
+        fire_once(config)?;
     };
     Ok(())
 }

@@ -1,23 +1,26 @@
 use eyre::{eyre, Result};
 use hyprland::data::{Monitors, Transforms, Workspace};
 use hyprland::dispatch::*;
+use hyprland::prelude::*;
 
 use log::{debug, error};
+
+use crate::config::Config;
 
 pub enum Orientation {
     Vertical,
     Horizontal,
 }
 
-pub fn rotate_ws(ws: Workspace, monitors: &mut Monitors) -> Result<()> {
+pub fn rotate_ws(ws: Workspace, config: &Config, monitors: Option<&Monitors>) -> Result<()> {
     match get_monitor_orientation(&ws.monitor, monitors) {
         Ok(Orientation::Vertical) => {
             debug!("Setting vertical: ws {}, mon {}", &ws.id, &ws.monitor);
-            Dispatch::call(DispatchType::OrientationTop)?;
+            Dispatch::call(config.vertical_layout.into())?;
         }
         Ok(Orientation::Horizontal) => {
             debug!("Setting horizontal: ws {}, mon {}", &ws.id, &ws.monitor);
-            Dispatch::call(DispatchType::OrientationCenter)?;
+            Dispatch::call(config.horizontal_layout.into())?;
         }
         Err(e) => {
             error!("Monitor not found: {:?}", e);
@@ -26,7 +29,14 @@ pub fn rotate_ws(ws: Workspace, monitors: &mut Monitors) -> Result<()> {
     Ok(())
 }
 
-pub fn get_monitor_orientation(monitor_name: &str, monitors: &mut Monitors) -> Result<Orientation> {
+pub fn get_monitor_orientation(
+    monitor_name: &str,
+    monitors: Option<&Monitors>,
+) -> Result<Orientation> {
+    let monitors = match monitors {
+        Some(m) => m.clone(),
+        None => Monitors::get()?,
+    };
     for m in monitors {
         if m.name.eq(&monitor_name) {
             if matches!(
