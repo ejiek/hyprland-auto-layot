@@ -9,16 +9,14 @@ Started from a [Hyprland issue](https://github.com/hyprwm/Hyprland/issues/3174).
 - Monitors have a different orientation
 - Master layout utilization
 - Monitor orientation is taken from transform value reported by IPC (`1`,`3`,`5`,`7` or `90`,`270` and their flipped versions)
-- ⏳ *Temporary*
-  - Central orientation for horizontal
-  - Top orientation for vertical
 
 ## Roadmap
 
 - [x] Add proper cli support with [clap](https://github.com/clap-rs/clap)
 - [x] Implement Fire Once strategy to handle the initial setup
-- [ ] Configurable orientation (currently hardcoded)
-- [ ] Configurable or baked in placeholder window (currently hardcoded alacritty)
+- [x] Configurable orientation (currently hardcoded)
+- [x] Configurable or baked in placeholder window (currently hardcoded alacritty)
+- [ ] Fix daemon mode ignoring switching to a ws active on another monitor
 - [ ] Config file (proper xdg support)
 - Documentation
   - [ ] Installation
@@ -26,6 +24,7 @@ Started from a [Hyprland issue](https://github.com/hyprwm/Hyprland/issues/3174).
   - [ ] Configuration
 - [ ] Startup checks & warnings
 - [ ] Figure out Special Workspaces
+- [ ] Reduce placeholder usage in daemon mode (hyprland fix or state cache)
 
 ## Installation
 
