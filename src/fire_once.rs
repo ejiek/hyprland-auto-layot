@@ -8,7 +8,6 @@ use log::debug;
 
 use crate::config::Config;
 use crate::helpers::*;
-use crate::hyprland_conf::Config as HlConfig;
 use std::{thread, time};
 
 // Save active workspaces for each monitor
@@ -29,7 +28,7 @@ pub fn fire_once(config: Config) -> Result<()> {
 
     // Non active workspaces are not available through the IPC
     // Therefore we need to get them from the config file
-    let hyprland_config = HlConfig::open(config.hyprland_conf.clone().unwrap())?;
+    let hyprland_config = config.hyprland_conf.clone().unwrap();
     debug!("Hyprland config: {:?}", hyprland_config);
 
     let initial_ws = Workspace::get_active()?;
@@ -60,7 +59,7 @@ pub fn fire_once(config: Config) -> Result<()> {
         ))?;
 
         let current_ws = Workspace::get_active()?;
-        rotate_ws(current_ws, &config, Some(&mut monitors.clone()))?;
+        rotate_ws(current_ws, &config, Some(&monitors.clone()))?;
     }
 
     window_placeholder.kill()?;

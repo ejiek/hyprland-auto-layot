@@ -5,14 +5,14 @@ use std::io::prelude::*;
 use log::debug;
 
 // Hyprland config
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Config {
     pub workspaces: Vec<Workspace>,
 }
 
 pub type Id = i32;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Workspace {
     pub id: Id,
 }

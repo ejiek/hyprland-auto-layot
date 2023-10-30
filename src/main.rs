@@ -73,38 +73,41 @@ fn main() -> Result<()> {
         .without_timestamps()
         .init()?;
 
-    let mode = match args.fireonce {
-        true => Mode::FireOnce(args.hyprland_conf),
-        false => Mode::Daemon,
+    let mode = match args.daemon {
+        true => Mode::Daemon,
+        false => Mode::FireOnce(args.hyprland_conf),
     };
 
     let config = Config::new(
         args.horizontal_layout,
         args.vertical_layout,
         args.placeholder_window,
-        mode,
-    );
+        mode.clone(),
+    )?;
 
     debug!("Using config: {:?}", config);
 
     // TODO: Check if any vertical monitors are present
 
-    if args.daemon {
-        info!("Running in Daemon mode");
-        let mut event_listener = EventListener::new();
-        event_listener.add_workspace_change_handler(move |_id, state| {
-            match workspace_change_handler(state, config.clone()) {
-                Ok(_) => {}
-                Err(e) => error!("Unable to handle workspace change event: {:?}", e),
-            };
-        });
+    match mode {
+        Mode::Daemon => {
+            info!("Running in Daemon mode");
+            let mut event_listener = EventListener::new();
+            event_listener.add_workspace_change_handler(move |_id, state| {
+                match workspace_change_handler(state, config.clone()) {
+                    Ok(_) => {}
+                    Err(e) => error!("Unable to handle workspace change event: {:?}", e),
+                };
+            });
 
-        event_listener
-            .start_listener()
-            .map_err(|e| eyre::Report::new(e).wrap_err("Failed to start event listener"))?;
-    } else {
-        info!("Running in FireOnce mode");
-        fire_once(config)?;
+            event_listener
+                .start_listener()
+                .map_err(|e| eyre::Report::new(e).wrap_err("Failed to start event listener"))?;
+        }
+        Mode::FireOnce(_) => {
+            info!("Running in FireOnce mode");
+            fire_once(config)?;
+        }
     };
     Ok(())
 }
