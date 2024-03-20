@@ -1,3 +1,7 @@
+> [!WARNING]
+> There is first-party support for configuring master layout on workspace basis in hyprland now.
+> As of Q1 2024 you can find it in Hyprland wiki: [Master-Layout/#workspace-rules](https://wiki.hyprland.org/Configuring/Master-Layout/#workspace-rules).
+
 # Hyprland auto layout
 
 Optimizes your multi-monitor setup by automagically aligning the master layout orientation with the respective monitor orientation.
